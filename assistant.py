@@ -56,6 +56,7 @@ from langchain_community.chat_message_histories import SQLChatMessageHistory
 from sqlalchemy. ext. asyncio import create_async_engine
 from langchain.callbacks.base import BaseCallbackHandler
 from pydantic.v1 import BaseModel, Field
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 import sys
 import logging
 
@@ -121,7 +122,10 @@ model = VLLMOpenAI(
     # dtype="auto"
 )
 
-embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
+# embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
+
+embeddings_model = HuggingFaceInferenceAPIEmbeddings(api_key=os.getenv("HF"),
+                                                     model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 # PDF_STORAGE_PATH = "./pdfs"
 
