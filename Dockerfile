@@ -12,6 +12,8 @@ COPY requirements.txt /app/
 
 RUN pip install -r /app/requirements.txt
 
+RUN pip install literalai==0.0.606
+
 # Copy your application code into the container
 COPY . /app/
 

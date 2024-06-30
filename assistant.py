@@ -124,8 +124,15 @@ model = VLLMOpenAI(
 
 # embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
 
-embeddings_model = HuggingFaceInferenceAPIEmbeddings(api_key=os.getenv("HF"),
-                                                     model_name="sentence-transformers/all-MiniLM-L6-v2")
+# embeddings_model = HuggingFaceInferenceAPIEmbeddings(api_key=os.getenv("HF"),
+#                                                      model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+embeddings_model = OpenAIEmbeddings(
+    openai_api_key=os.getenv("VLLM_API_KEY"),
+    openai_api_base="https://api.runpod.ai/v2/w8ifva1iikv9k7/openai/v1",
+    model="sentence-transformers/all-MiniLM-l6-v2",
+    tiktoken_enabled=False
+)
 
 # PDF_STORAGE_PATH = "./pdfs"
 
