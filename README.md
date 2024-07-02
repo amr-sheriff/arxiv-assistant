@@ -47,7 +47,7 @@ To get started with the arXiv Assistant, follow these steps:
 
 1. **Clone the Repository**:
    ```bash git clone https://github.com/your-repo/arxiv-assistant.git 
-cd arxiv-assistant```
+    cd arxiv-assistant```
 
 2. **Build docker image**:
     ```bash docker build -t arxiv-assistant:latest .```
@@ -55,5 +55,5 @@ cd arxiv-assistant```
 3. **Run countainer**:
     ```bash docker run -d --env-file .env -p 8080:8080 arxiv_assistant:latest```
 
-
+Run the app locally and navigate to localhost:8080 🥂
  
