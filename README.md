@@ -1,10 +1,13 @@
 # arXiv Assistant 📚🤖
 
-Welcome to the arXiv Assistant repository! This project is designed to help researchers and practitioners stay up-to-date with the latest advancements in various fields by retrieving, summarizing, and answering queries about research papers from arXiv.
+Welcome to the arXiv Assistant repository!
+This project is a demonstration of how to prototype a Retrieval-Augmented Generation (RAG) Assistant employing a suite of open-source technologies, frameworks and fine-tuned Large Language Models. It can be adapted to many other business-specific use cases.
+For more detailed information, please refer to the project paper.
 
-## Introduction 🚀
+# Demo 🎥
 
-The arXiv Assistant is a powerful chatbot that can retrieve and select relevant research papers based on user-specified criteria such as submission/revision date, domain/category, and topic. It can also answer questions about the papers and highlight key points. This tool is invaluable in the face of the rapid growth of research publications, particularly in the Computer Science category.
+The arXiv Assistant is a simple demo designed to help researchers and practitioners stay up-to-date with the latest advancements in various fields by retrieving, summarizing, and answering queries about research papers from arXiv.
+it can retrieve and select relevant research papers based on user-specified criteria such as submission/revision date, domain/category, and topic. It can also answer questions about the papers and highlight key points. 
 
 ## Development Process 🛠️
 
@@ -12,7 +15,7 @@ The development process involved leveraging state-of-the-art techniques to imple
 - **QLoRA Quantization**: For efficient memory usage.
 - **Parameter-Efficient Fine-Tuning (PEFT)**: Utilizing LoRA adapters.
 - **Function Calling and In-Context Learning**: To enhance the assistant's capabilities.
-- **Modular Retrieval Augmented Generation (RAG) process**: To improve contextual understanding and relevance.
+- **Retrieval Augmented Generation (RAG) process**: To improve contextual understanding and relevance.
 - **HuggingFace Text Embedding Inference**: Serving the embedding model using HuggingFace to provide high-quality embeddings for document retrieval and processing.
 
 ### Key Features ✨
@@ -61,5 +64,5 @@ To get started with arXiv Assistant, open the terminal and follow these steps:
    $ docker run -d --env-file .env -p 8080:8080 arxiv_assistant:latest
    ```
 
-Run the app locally and navigate to [localhost:8080](http://localhost:8080) 🥂
+Run the app locally and navigate to [localhost:8080/arxiv-assistant](http://localhost:8080/arxiv-assistant) 🥂
  
