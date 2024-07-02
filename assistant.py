@@ -59,33 +59,13 @@ from pydantic.v1 import BaseModel, Field
 from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 import sys
 import logging
+from langchain_huggingface.embeddings import HuggingFaceEndpointEmbeddings
 
 logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 logger = logging.getLogger()
 
 load_dotenv()
 # client = LiteralClient()
-
-
-def trace_calls(frame, event, arg):
-    if event == "call":
-        co = frame.f_code
-        func_name = co.co_name
-        func_line_no = frame.f_lineno
-        func_filename = co.co_filename
-        logger.debug(f"Call to {func_name} on line {func_line_no} of {func_filename}")
-        return trace_lines
-    return trace_calls
-
-
-def trace_lines(frame, event, arg):
-    if event == "line":
-        co = frame.f_code
-        func_name = co.co_name
-        func_line_no = frame.f_lineno
-        func_filename = co.co_filename
-        logger.debug(f"Executing line {func_line_no} of {func_filename} in {func_name}")
-    return trace_lines
 
 
 class ChatMessageHistory(BaseChatMessageHistory, BaseModel):
@@ -109,7 +89,7 @@ namespaces = set()
 
 model = VLLMOpenAI(
     openai_api_key=os.getenv("VLLM_API_KEY"),
-    openai_api_base="https://api.runpod.ai/v2/vllm-2dncnxmiobkpku/openai/v1",
+    openai_api_base=os.getenv("VLLM_ENDPOINT"),
     model_name="amrachraf/arxiv-assistant-merged_peft_model",
     # trust_remote_code=True,  # mandatory for hf models
     extra_body={"SamplingParams": {"min_tokens": 1,
@@ -127,11 +107,16 @@ model = VLLMOpenAI(
 # embeddings_model = HuggingFaceInferenceAPIEmbeddings(api_key=os.getenv("HF"),
 #                                                      model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-embeddings_model = OpenAIEmbeddings(
-    openai_api_key=os.getenv("VLLM_API_KEY"),
-    openai_api_base="https://api.runpod.ai/v2/w8ifva1iikv9k7/openai/v1",
-    model="sentence-transformers/all-MiniLM-l6-v2",
-    tiktoken_enabled=False
+# embeddings_model = OpenAIEmbeddings(
+#     openai_api_key=os.getenv("VLLM_API_KEY"),
+#     openai_api_base="https://api.runpod.ai/v2/w8ifva1iikv9k7/openai/v1",
+#     model="sentence-transformers/all-MiniLM-l6-v2",
+#     tiktoken_enabled=False
+# )
+
+embeddings_model = HuggingFaceEndpointEmbeddings(
+    model=os.getenv("EMBED_ENDPOINT"), 
+    huggingfacehub_api_token=os.getenv("HF")
 )
 
 # PDF_STORAGE_PATH = "./pdfs"
@@ -194,7 +179,7 @@ def oauth_callback(
 
 # doc_search = process_pdfs(PDF_STORAGE_PATH)
 
-openai_api_base = "https://api.runpod.ai/v2/vllm-2dncnxmiobkpku/openai/v1"
+openai_api_base = os.getenv("VLLM_ENDPOINT") 
 
 openai_client = OpenAI(
     api_key=os.getenv("VLLM_API_KEY"),
@@ -242,7 +227,7 @@ Eliminate any notes inside parentheses from your response."""
     arxiv_query = arxiv_query.strip().replace("\n", "")
     arxiv_docs = ArxivLoader(query=arxiv_query, load_max_docs=3, top_k_results=3,
                              load_all_available_meta=True,
-                             doc_content_chars_max=None).load()
+                             doc_content_chars_max=os.getenv("MAX_ARXIV_CHAR")).load()
 
     cl.user_session.set("arxiv_docs", arxiv_docs)
     cl.user_session.set("arxiv_query", arxiv_query)
@@ -619,7 +604,7 @@ async def on_message(message: cl.Message):
                 self.msg.elements.append(
                     cl.Text(name="Sources", content=sources_text, display="inline")
                 )
-    sys.settrace(trace_calls)
+
     result = await runnable.ainvoke(
         {"input": message.content},
         config={
@@ -627,7 +612,7 @@ async def on_message(message: cl.Message):
             'callbacks': [cl.LangchainCallbackHandler(), PostMessageHandler(msg)]
         },  # constructs a key "abc123" in `store`.
     )
-    sys.settrace(None)
+
     # async for chunk in runnable.astream(
     #         message.content,
     #         config=RunnableConfig(callbacks=[
@@ -648,7 +633,5 @@ async def on_message(message: cl.Message):
 
 # if __name__ == "__main__":
 #     from chainlit.cli import run_chainlit
-#     sys.settrace(trace_calls)
 #     run_chainlit(__file__)
-#     sys.settrace(None)
 
