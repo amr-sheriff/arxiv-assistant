@@ -1,5 +1,6 @@
 
 ![Alt text](https://github.com/amr-sheriff/arxiv-assistant/blob/main/public/logo_dark.png)
+
 A RAG Assistant Prototype. The live app can be accessed at [arXiv Assistant](https://amrsherif.live/arxiv-assistant).
 
 ---
