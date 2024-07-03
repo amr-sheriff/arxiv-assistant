@@ -1,10 +1,12 @@
 ## arXiv Assistant repository 📚🤖
 
+![Alt text](https://github.com/amr-sheriff/arxiv-assistant/blob/main/public/logo_dark.png)
+
 This project is a demonstration of how to prototype a Retrieval-Augmented Generation (RAG) Assistant employing a suite of open-source technologies, frameworks and fine-tuned Large Language Models.
 
-It can be adapted to many other business-specific use cases. For more detailed information, please refer to the project paper.
+It can be adapted to many other business-specific use cases. 
 
-# Demo 🎥
+## Demo 🎥
 
 The arXiv Assistant is a simple demo designed to help researchers and practitioners stay up-to-date with the latest advancements in various fields by retrieving, summarizing, and answering queries about research papers from arXiv.
 
@@ -34,12 +36,12 @@ The development process involved leveraging state-of-the-art techniques to imple
 
 ### Integrations & Frameworks 🔌
 
-- **Weights & Biases**: For monitoring and logging the fine-tuning process.
-- **LangChain**: For implementing retrieval and processing modules.
-- **HuggingFace TEI**: For text embedding inference, serving high-quality embeddings.
-- **vLLM**: As the serving and inference engine.
-- **Chainlit**: to build scalable conversational AI or agentic applications.
-- **Literal AI**: LLM evaluation and observability platform
+- [**Weights & Biases**](https://wandb.ai/site): For monitoring and logging the fine-tuning process.
+- [**LangChain**](https://www.langchain.com/): For implementing retrieval and processing modules.
+- [**HuggingFace TEI**](https://huggingface.co/docs/text-embeddings-inference/en/index): For text embedding inference, serving high-quality embeddings.
+- [**vLLM**](https://github.com/vllm-project/vllm): As the serving and inference engine.
+- [**Chainlit**](https://github.com/Chainlit/chainlit/tree/main): to build scalable conversational AI or agentic applications.
+- [**Literal AI**](https://literalai.com/): LLM evaluation and observability platform
 
 ## Quickstart Guide ⚡
 
@@ -64,6 +66,6 @@ To get started with arXiv Assistant, open the terminal and follow these steps:
 Run the app locally and navigate to [localhost:8080/arxiv-assistant](http://localhost:8080/arxiv-assistant) 🥂
  
 ## License 📜
-This project is licensed under the Apache 2.0 license.
+This project is licensed under the [Apache 2.0](https://github.com/amr-sheriff/arxiv-assistant/blob/main/LICENSE) license.
 
 
