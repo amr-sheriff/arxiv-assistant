@@ -1,6 +1,6 @@
 
 ![Alt text](https://github.com/amr-sheriff/arxiv-assistant/blob/main/public/logo_dark.png)
-<p align="center">A RAG Assistant Prototype</p>
+<p align="center">A RAG Assistant Prototype. The live app can be accessed at [arXiv Assistant](https://amrsherif.live/arxiv-assistant)</p>
 
 ---
 This project is a demonstration of how to prototype a Retrieval-Augmented Generation (RAG) Assistant employing a suite of open-source technologies, frameworks and fine-tuned Large Language Models.
@@ -16,9 +16,9 @@ The assistant can retrieve and select relevant research papers based on user-spe
 ## Development Process 🛠️
 
 The development process involved leveraging state-of-the-art techniques to implement a lightweight yet efficient LLM system. Key technologies used include:
-- **Instruction Tuning Dataset**: Generate domain-specific synthetic dataset consisting of instructions and QAs pairs.
+- [**Instruction Tuning Dataset**](https://huggingface.co/datasets/amrachraf/arXiv-full-text-synthetic-instruct-tune): Generate domain-specific synthetic dataset consisting of instructions and QAs pairs.
 - **QLoRA Quantization**: For efficient memory usage.
-- **Parameter-Efficient Fine-Tuning (PEFT)**: Utilizing LoRA adapters.
+- **Parameter-Efficient Fine-Tuning (PEFT)**: Utilizing LoRA adapters. PEFT mdel available [here](https://huggingface.co/amrachraf/arxiv-assistant-merged_peft_model).
 - **Function Calling and In-Context Learning**: To enhance the assistant's capabilities.
 - **Retrieval Augmented Generation (RAG) process**: To improve contextual understanding and relevance, which enhances the retrieval and generation process.
 - **vLLM**: As the serving and inference engine.
