@@ -55,12 +55,28 @@ To get started with arXiv Assistant, open the terminal and follow these steps:
    $ cd arxiv-assistant
    ```
 
-2. **Build docker image**:
+2. **Create a `.env` file in the root directory with the following environment variables:**
+   ```bash
+   $ nano .env
+   ```
+   ```env
+   LITERAL_API_KEY=<your-literal-api-key>
+   VLLM_API_KEY=<your-vllm-server-key>
+   CHAINLIT_AUTH_SECRET=<your-chainlit-auth-secret>
+   OAUTH_GOOGLE_CLIENT_ID=<your-oauth-google-client-id>
+   OAUTH_GOOGLE_CLIENT_SECRET=<your-oauth-google-client-secret>
+   HF=<your-huggingface-token>
+   EMBED_ENDPOINT=<your-tei-endpoint>
+   VLLM_ENDPOINT=<your-vllm-server-endpoint>
+   MAX_ARXIV_CHAR=<max-character-to-load-from-each-arxiv-document>  # set to None to disable
+   ```
+
+3. **Build docker image**:
    ```bash
    $ docker build -t arxiv-assistant:latest .
    ```
 
-3. **Run countainer**:
+4. **Run countainer**:
    ```bash
    $ docker run -d --env-file .env -p 8080:8080 arxiv_assistant:latest
    ```
