@@ -1,6 +1,5 @@
-# arXiv Assistant 📚🤖
+## arXiv Assistant repository 📚🤖
 
-## Welcome to the arXiv Assistant repository!
 This project is a demonstration of how to prototype a Retrieval-Augmented Generation (RAG) Assistant employing a suite of open-source technologies, frameworks and fine-tuned Large Language Models.
 
 It can be adapted to many other business-specific use cases. For more detailed information, please refer to the project paper.
@@ -8,6 +7,7 @@ It can be adapted to many other business-specific use cases. For more detailed i
 # Demo 🎥
 
 The arXiv Assistant is a simple demo designed to help researchers and practitioners stay up-to-date with the latest advancements in various fields by retrieving, summarizing, and answering queries about research papers from arXiv.
+
 The assistant can retrieve and select relevant research papers based on user-specified criteria such as submission/revision date, domain/category, and topic. Additionally, it can also answer questions about the papers and highlight key points. 
 
 ## Development Process 🛠️
