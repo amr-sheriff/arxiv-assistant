@@ -1,7 +1,8 @@
-## arXiv Assistant repository 📚🤖
 
 ![Alt text](https://github.com/amr-sheriff/arxiv-assistant/blob/main/public/logo_dark.png)
+<p align="center">A RAG Assistant Prototype</p>
 
+---
 This project is a demonstration of how to prototype a Retrieval-Augmented Generation (RAG) Assistant employing a suite of open-source technologies, frameworks and fine-tuned Large Language Models.
 
 It can be adapted to many other business-specific use cases. 
