@@ -1,7 +1,6 @@
 
 ![Alt text](https://github.com/amr-sheriff/arxiv-assistant/blob/main/public/logo_dark.png)
-<p align="center">A RAG Assistant Prototype. The live app can be accessed at </p>
-                             [arXiv Assistant](https://amrsherif.live/arxiv-assistant).
+A RAG Assistant Prototype. The live app can be accessed at [arXiv Assistant](https://amrsherif.live/arxiv-assistant).
 
 ---
 This project is a demonstration of how to prototype a Retrieval-Augmented Generation (RAG) Assistant employing a suite of open-source technologies, frameworks and fine-tuned Large Language Models.
