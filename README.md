@@ -14,6 +14,8 @@ The arXiv Assistant is a simple demo designed to help researchers and practition
 
 The assistant can retrieve and select relevant research papers based on user-specified criteria such as submission/revision date, domain/category, and topic. Additionally, it can also answer questions about the papers and highlight key points. 
 
+![Alt text](https://github.com/amr-sheriff/arxiv-assistant/blob/main/public/demo.gif)
+
 ## Development Process 🛠️
 
 The development process involved leveraging state-of-the-art techniques to implement a lightweight yet efficient LLM system. Key technologies used include:
