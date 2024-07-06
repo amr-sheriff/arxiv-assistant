@@ -1,14 +1,27 @@
 # Welcome to Chainlit! 🚀🤖
 
-Hi there, Developer! 👋 We're excited to have you on board. Chainlit is a powerful tool designed to help you prototype, debug and share applications built on top of LLMs.
+This project is a demonstration of how to prototype a Retrieval-Augmented Generation (RAG) Assistant employing a suite of open-source technologies, frameworks and fine-tuned Large Language Models.
 
-## Useful Links 🔗
+It can be adapted to many other business-specific use cases.
 
-- **Documentation:** Get started with our comprehensive [Chainlit Documentation](https://docs.chainlit.io) 📚
-- **Discord Community:** Join our friendly [Chainlit Discord](https://discord.gg/k73SQ3FyUh) to ask questions, share your projects, and connect with other developers! 💬
+The arXiv Assistant is a simple demo designed to help researchers and practitioners stay up-to-date with the latest advancements in various fields by retrieving, summarizing, and answering queries about research papers from arXiv.
 
-We can't wait to see what you create with Chainlit! Happy coding! 💻😊
+The assistant can retrieve and select relevant research papers based on user-specified criteria such as submission/revision date, domain/category, and topic. Additionally, it can also answer questions about the papers and highlight key points.
 
-## Welcome screen
+## How to use 👇
 
-To modify the welcome screen, edit the `chainlit.md` file at the root of your project. If you do not want a welcome screen, just leave this file empty.
+Start by entering a topic:
+- FlashAttention
+- RAG papers in year 2024
+- What's FlashAttention?
+- Tell me about Transformers Models in NLP
+
+Then Ask questions:
+- Explain Flash Attention 2
+- Summarize this paper in 3 paragraphs ''
+- What are the advantages of flash attention 2. Mention them in bullet points
+
+## Notes
+
+- To change the topic, start a new conversation
+
