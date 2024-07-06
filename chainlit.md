@@ -1,4 +1,4 @@
-# Welcome to Chainlit! 🚀🤖
+# Welcome to arXiv Assistant! 🚀🤖
 
 This project is a demonstration of how to prototype a Retrieval-Augmented Generation (RAG) Assistant employing a suite of open-source technologies, frameworks and fine-tuned Large Language Models.
 
@@ -18,8 +18,9 @@ Start by entering a topic:
 
 Then Ask questions:
 - Explain Flash Attention 2
-- Summarize this paper in 3 paragraphs ''
-- What are the advantages of flash attention 2. Mention them in bullet points
+- Summarize this paper in 3 paragraphs 'FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning'
+- What are the advantages of flash attention 2? Mention them in bullet points
+- Who are the authors of Flash Attention 2 paper?
 
 ## Notes
 
