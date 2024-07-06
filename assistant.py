@@ -1,68 +1,52 @@
-import chainlit.cli
-from typing import List
+from typing import List, Dict, Optional
 from pathlib import Path
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.prompts import ChatPromptTemplate
-from langchain.schema import StrOutputParser
-from langchain_community.document_loaders import (
-    PyMuPDFLoader,
-)
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.schema import StrOutputParser, Document
+# from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores.chroma import Chroma
 from langchain.indexes import SQLRecordManager, index
-from langchain.schema import Document
-from langchain.schema.runnable import Runnable, RunnablePassthrough, RunnableConfig, RunnableLambda
+# from langchain.schema.runnable import Runnable, RunnablePassthrough, RunnableConfig, RunnableLambda
 from langchain.callbacks.base import BaseCallbackHandler
-
 import chainlit as cl
-
 from adapted_vllm import VLLMOpenAI
 from openai import OpenAI
-from langchain_huggingface import HuggingFaceEmbeddings
+# from langchain_huggingface import HuggingFaceEmbeddings
 import os
-from operator import itemgetter
+# from operator import itemgetter
 from langchain.memory import ConversationBufferMemory
 from chainlit.types import ThreadDict
 import chainlit as cl
 from langchain_community.document_loaders import ArxivLoader
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain.chains import RetrievalQA
+from langchain.chains import create_history_aware_retriever, create_retrieval_chain, RetrievalQA
 from literalai import LiteralClient
-from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_community.vectorstores import Chroma
 from langchain_community.vectorstores.utils import filter_complex_metadata
 # from langchain_community.chat_message_histories import ChatMessageHistory # adapted class defined below
-from langchain_community.document_loaders import WebBaseLoader
+# from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.chat_history import BaseChatMessageHistory, InMemoryChatMessageHistory, BaseMessage
 from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
 # from chat_adapted import ChatPromptTemplate, MessagesPlaceholder  # adapted class imported
 from langchain_core.runnables.history import RunnableWithMessageHistory
 # from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_experimental.text_splitter import SemanticChunker
 # from langchain_community.llms import VLLMOpenAI
 from adapted_vllm import VLLMOpenAI
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
-from typing import Dict, Optional
-import uuid
-import chromadb
+# import uuid
+# import chromadb
 from chainlit.types import ThreadDict
 # from chromadb.config import Settings
 from langchain.memory import ConversationBufferMemory
-from langchain_community.chat_message_histories import SQLChatMessageHistory
-from sqlalchemy. ext. asyncio import create_async_engine
+# from langchain_community.chat_message_histories import SQLChatMessageHistory
+# from sqlalchemy. ext. asyncio import create_async_engine
 from langchain.callbacks.base import BaseCallbackHandler
 from pydantic.v1 import BaseModel, Field
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
-import sys
-import logging
+# from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain_huggingface.embeddings import HuggingFaceEndpointEmbeddings
 
-logging.basicConfig(level=logging.DEBUG, format='%(message)s')
-logger = logging.getLogger()
 
 load_dotenv()
 # client = LiteralClient()
@@ -84,22 +68,16 @@ class ChatMessageHistory(BaseChatMessageHistory, BaseModel):
 
 
 namespaces = set()
-# chunk_size = 1024
-# chunk_overlap = 50
 
 model = VLLMOpenAI(
     openai_api_key=os.getenv("VLLM_API_KEY"),
     openai_api_base=os.getenv("VLLM_ENDPOINT"),
     model_name="amrachraf/arxiv-assistant-merged_peft_model",
-    # trust_remote_code=True,  # mandatory for hf models
     extra_body={"SamplingParams": {"min_tokens": 1,
                                    "skip_special_tokens": True,
-                                   # "top_k": 1
                                    }, "trust_remote_code": True},
     temperature=0,
     max_tokens=4000,
-    # top_p=0.95
-    # dtype="auto"
 )
 
 # embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
@@ -107,19 +85,10 @@ model = VLLMOpenAI(
 # embeddings_model = HuggingFaceInferenceAPIEmbeddings(api_key=os.getenv("HF"),
 #                                                      model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-# embeddings_model = OpenAIEmbeddings(
-#     openai_api_key=os.getenv("VLLM_API_KEY"),
-#     openai_api_base="https://api.runpod.ai/v2/w8ifva1iikv9k7/openai/v1",
-#     model="sentence-transformers/all-MiniLM-l6-v2",
-#     tiktoken_enabled=False
-# )
-
 embeddings_model = HuggingFaceEndpointEmbeddings(
     model=os.getenv("EMBED_ENDPOINT"), 
     huggingfacehub_api_token=os.getenv("HF")
 )
-
-# PDF_STORAGE_PATH = "./pdfs"
 
 
 @cl.oauth_callback
@@ -131,53 +100,11 @@ def oauth_callback(
 ) -> Optional[cl.User]:
     return default_user
 
-# @cl.password_auth_callback
-# def auth_callback(username: str, password: str):
-#     # Fetch the user matching username from your database
-#     # and compare the hashed password with the value stored in the database
-#     if (username, password) == ("admin", "admin"):
-#         return cl.User(
-#             identifier="admin", metadata={"role": "admin", "provider": "credentials"}
-#         )
-#     else:
-#         return None
 
 # @cl.password_auth_callback
 # def auth():
 #     return cl.User(identifier="test")
 
-
-# def process_pdfs(pdf_storage_path: str):
-#     pdf_directory = Path(pdf_storage_path)
-#     docs = []  # type: List[Document]
-#     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-#
-#     for pdf_path in pdf_directory.glob("*.pdf"):
-#         loader = PyMuPDFLoader(str(pdf_path))
-#         documents = loader.load()
-#         docs += text_splitter.split_documents(documents)
-#
-#     doc_search = Chroma.from_documents(docs, embeddings_model)
-#
-#     namespace = "chromadb/my_documents"
-#     record_manager = SQLRecordManager(
-#         namespace, db_url="sqlite:///record_manager_cache.sql"
-#     )
-#     record_manager.create_schema()
-#
-#     index_result = index(
-#         docs,
-#         record_manager,
-#         doc_search,
-#         cleanup="incremental",
-#         source_id_key="source",
-#     )
-#
-#     print(f"Indexing stats: {index_result}")
-#
-#     return doc_search
-
-# doc_search = process_pdfs(PDF_STORAGE_PATH)
 
 openai_api_base = os.getenv("VLLM_ENDPOINT") 
 
@@ -209,17 +136,14 @@ Eliminate any notes inside parentheses from your response."""
 
     chat_response = openai_client.chat.completions.create(
         model="amrachraf/arxiv-assistant-merged_peft_model",
-        # top_p=0.95,
         temperature=0,
         max_tokens=1000,
-        # stream=True,
         messages=[
             {"role": "user", "content": search_sys_prompt + "\n" + arxiv_query}
         ],
         extra_body={
             "min_tokens": 1,
             "skip_special_tokens": True,
-            # "top_k": 50
         }
     )
 
@@ -249,28 +173,10 @@ def create_vectorstore(docs: List[Document], collection_name: str):
     for i, text in enumerate(texts):
         text.metadata["source"] = f"source_{i}"
 
-    # # for index use
-    # docs = [text for text in texts]
-
     cl.user_session.set("docs", texts)
 
     vectorstore = Chroma.from_documents(texts, embeddings_model, collection_name=collection_name, persist_directory="./chroma")
-    # chroma_client = chromadb.PersistentClient()
-    #
-    # collection = chroma_client.get_or_create_collection(collection_name)
-    #
-    # for text in texts:
-    #     collection.add(
-    #         ids=[str(uuid.uuid1())], metadatas=text.metadata, documents=text.page_content
-    #     )
-    #
-    # vectorstore = Chroma(
-    #     client=chroma_client,
-    #     collection_name=collection_name,
-    #     embedding_function=embeddings_model,
-    # )
 
-    # namespace = "chromadb/my_documents"
     namespace = collection_name
 
     record_manager = SQLRecordManager(
@@ -295,18 +201,14 @@ def create_vectorstore(docs: List[Document], collection_name: str):
 
 @cl.step(type="tool", name="Arxiv API")
 async def gen_query(human_query: str):
-    # current_step = cl.context.current_step
     arxiv_docs, arxiv_query = process_arxiv_pdfs(human_query)
     doc_len = len(arxiv_docs)
-    # current_step.output = f"Retrieved {doc_len} documents for `{human_query}` Processing results."
     await cl.Message(content=f"Retrieved {doc_len} documents for `{arxiv_query}` Processing results.").send()
     return arxiv_docs
 
 
 @cl.step(type="embedding", name="Generate Vectorstore")
 async def process_query(arxiv_docs: List[Document]):
-    # current_step = cl.context.current_step
-    # Process results
     arxiv_papers = [
         f"""__Published:__ {doc.metadata['Published']}s
 __Title:__ {doc.metadata['Title']}
@@ -315,34 +217,18 @@ __Summary:__ {doc.metadata['Summary']}
 __URL:__ {doc.metadata['links'][-1]}
 
 """ for doc in arxiv_docs]
-    # current_step.output = "".join(arxiv_papers)
     await cl.Message(content=f"Processing and chunking retrieved articles. This might take sometime.").send()
 
     vectorstore = await cl.make_async(create_vectorstore)(arxiv_docs, collection_name=cl.context.session.thread_id)
 
     arxiv_papers_msg = cl.Message(content="".join(arxiv_papers))
     arxiv_papers_content = arxiv_papers_msg.content
-    # await arxiv_papers_msg.send()
 
     return vectorstore, arxiv_papers_content
 
 
 @cl.step(type="run", name="Arxiv Assistant Chain generation")
 async def chain(human_query: str, memory: Dict[str, BaseChatMessageHistory]):
-    # greeting_msg = cl.Message(f"Hello {app_user.identifier}")
-    # await greeting_msg.send()
-    # print(greeting_msg.content)
-    # print(greeting_msg)
-    # memory.add_ai_message(greeting_msg.content)
-
-    # # prompt the user to enter a topic
-    # while query is None:
-    #     topic_msg = cl.AskUserMessage(
-    #         content="Please enter a topic to begin!", timeout=15)
-    #     query = await topic_msg.send()
-    #     # memory.add_ai_message(topic_msg.content)
-    # human_query = str(query['output'])
-
     arxiv_docs = await gen_query(human_query)
     vectorstore, arxiv_papers_content = await process_query(arxiv_docs)
 
@@ -351,10 +237,7 @@ async def chain(human_query: str, memory: Dict[str, BaseChatMessageHistory]):
                                                         "fetch_k": 50
                                                         }
                                          )
-    # retriever = vectorstore.as_retriever()
-    # retriever = doc_search.as_retriever()
 
-    # Contextualize question prompt
     contextualize_q_system_prompt = (
         "Given a chat history and the latest user question "
         "which might reference context in the chat history, "
@@ -373,7 +256,6 @@ async def chain(human_query: str, memory: Dict[str, BaseChatMessageHistory]):
         model, retriever, contextualize_q_prompt
     )
 
-    # system prompt for question answering
     system_prompt = (
         "You are an arXiv assistant for question-answering tasks. "
         "your name is Marvin, and you're developed by Amr Achraf. "
@@ -399,15 +281,10 @@ async def chain(human_query: str, memory: Dict[str, BaseChatMessageHistory]):
 
     rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
-    # manage chat history
-    # store = {}
-    # cl.user_session.set("memory", store)
-    # memory = cl.user_session.get("memory")
-
     def get_session_history(session_id: str) -> BaseChatMessageHistory:
         if session_id not in memory:
             memory[session_id] = ChatMessageHistory()
-            memory[session_id].add_ai_message(arxiv_papers_content) # testing adding summary of retrieved papers to chat history in first invokation
+            memory[session_id].add_ai_message(arxiv_papers_content) # adding summary of retrieved papers to chat history in first invokation
         return memory[session_id]
 
     runnable = RunnableWithMessageHistory(
@@ -418,7 +295,6 @@ async def chain(human_query: str, memory: Dict[str, BaseChatMessageHistory]):
         output_messages_key="answer",
     )
 
-    # await cl.Message(content=f"Database for `{human_query}` is created successfully. You can ask questions.").send()
     return runnable, arxiv_papers_content
 
 
@@ -429,14 +305,11 @@ async def send_message_to_user(human_query: str):
 
 @cl.on_chat_start
 async def on_chat_start():
-    # manage chat history
     store = {}
 
     cl.user_session.set("memory", store)
 
     memory = cl.user_session.get("memory")
-
-    # memory = cl.user_session.get("memory")
 
     app_user = cl.user_session.get("user")
 
@@ -445,14 +318,9 @@ async def on_chat_start():
 
     query = None
 
-    # prompt the user to enter a topic
     while query is None:
         query = await cl.AskUserMessage(content="Please enter a topic to begin!", timeout=15).send()
     human_query = query['output']
-
-    # res = await cl.AskUserMessage(content="Please enter a topic to begin!", timeout=15).send()
-    # if res:
-    #     human_query = res['output']
 
     runnable, arxiv_papers_content = await chain(human_query, memory)
 
@@ -470,7 +338,6 @@ async def on_chat_resume(thread: ThreadDict):
     store[cl.user_session.get("id")] = ChatMessageHistory()
 
     memory = store[cl.user_session.get("id")]
-    # print(thread)  # #### checking thread dict
     root_messages = [m for m in thread["steps"] if m["parentId"] == None]
     for message in root_messages:
         if message["type"] == "user_message":
@@ -482,19 +349,11 @@ async def on_chat_resume(thread: ThreadDict):
 
     memory = cl.user_session.get("memory")
 
-    print("memory", memory)  # ### checking memory rebuilt
+    # print("memory", memory)  # ### checking memory rebuilt
 
     collection_name = cl.context.session.thread_id
 
     vectorstore = Chroma(embedding_function=embeddings_model, collection_name=collection_name, persist_directory="./chroma")
-
-    # chroma_client = chromadb.PersistentClient()
-    #
-    # vectorstore = Chroma(
-    #     client=chroma_client,
-    #     collection_name=collection_name,
-    #     embedding_function=embeddings_model,
-    # )
 
     retriever = vectorstore.as_retriever(search_type="mmr",
                                          search_kwargs={
@@ -503,11 +362,6 @@ async def on_chat_resume(thread: ThreadDict):
                                          }
                                          )
 
-    # retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 5})
-    # retriever = vectorstore.as_retriever()
-    # retriever = doc_search.as_retriever()
-
-    # Contextualize question prompt
     contextualize_q_system_prompt = (
         "Given a chat history and the latest user question "
         "which might reference context in the chat history, "
@@ -526,7 +380,6 @@ async def on_chat_resume(thread: ThreadDict):
         model, retriever, contextualize_q_prompt
     )
 
-    # system prompt for question answering
     system_prompt = (
         "You are an arXiv assistant for question-answering tasks. "
         "your name is Marvin, and you're developed by Amr Achraf. "
@@ -551,11 +404,6 @@ async def on_chat_resume(thread: ThreadDict):
     question_answer_chain = create_stuff_documents_chain(model, qa_prompt)
 
     rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
-
-    # manage chat history
-    # store = {}
-    # cl.user_session.set("memory", store)
-    # memory = cl.user_session.get("memory")
 
     def get_session_history(session_id: str) -> BaseChatMessageHistory:
         if session_id not in memory:
@@ -575,12 +423,8 @@ async def on_chat_resume(thread: ThreadDict):
 
 @cl.on_message
 async def on_message(message: cl.Message):
-    # memory = cl.user_session.get("memory")
     runnable = cl.user_session.get("runnable")
     msg = cl.Message(content="")
-
-    # Create a new instance of the callback handler for each invocation
-    # cb = client.langchain_callback()
 
     class PostMessageHandler(BaseCallbackHandler):
         """
@@ -591,12 +435,12 @@ async def on_message(message: cl.Message):
         def __init__(self, msg: cl.Message):
             BaseCallbackHandler.__init__(self)
             self.msg = msg
-            self.sources = set()  # To store unique pairs
+            self.sources = set() 
 
         def on_retriever_end(self, documents, *, run_id, parent_run_id, **kwargs):
             for d in documents:
                 source_page_pair = (d.metadata['source'], d.metadata['entry_id'], d.metadata['Title'])
-                self.sources.add(source_page_pair)  # Add unique pairs to the set
+                self.sources.add(source_page_pair) 
 
         def on_llm_end(self, response, *, run_id, parent_run_id, **kwargs):
             if len(self.sources):
@@ -610,28 +454,9 @@ async def on_message(message: cl.Message):
         config={
             "configurable": {"session_id": cl.user_session.get("id")},
             'callbacks': [cl.LangchainCallbackHandler(), PostMessageHandler(msg)]
-        },  # constructs a key "abc123" in `store`.
+        }, 
     )
 
-    # async for chunk in runnable.astream(
-    #         message.content,
-    #         config=RunnableConfig(callbacks=[
-    #             cl.LangchainCallbackHandler(),
-    #             PostMessageHandler(msg)
-    #         ]),
-    # ):
-    #     await msg.stream_token(chunk)
-
-    # await msg.send()
     await msg.send()
     await cl.Message(content="".join(result['answer']), type="assistant_message").send()
-
-    # memory.add_user_message(message.content)
-    # memory.add_ai_message(msg.content)
-
-    # fix when switching to on start new chat from on resume (or current active chat) the first time to goes to on message without initialize runnable gives none
-
-# if __name__ == "__main__":
-#     from chainlit.cli import run_chainlit
-#     run_chainlit(__file__)
 
